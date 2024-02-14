@@ -1,0 +1,64 @@
+# source_entity_class:
+#   target_entity_class:
+#     source_parameter:
+#       target_parameter OR 
+#       [target_parameter, optional multiplier, [optional list of dimension positions]]
+node: 
+  node:
+    flow_annual: annual_flow
+    flow_profile: inflow
+    penalty_upward: penalty_up
+    penalty_downward: penalty_down
+    storage_interest_rate: interest_rate
+    storage_fixed_cost: fixed_cost
+    storage_lifetime: lifetime
+    storage_investment_cost: invest_cost
+    storage_salvage_value: salvage_value
+  commodity:
+    commodity_price: price
+
+unit: 
+  unit:
+    availability: availability
+    efficiency: efficiency
+    interest_rate: interest_rate
+    lifetime: lifetime
+    startup_cost: startup_cost
+    shutdown_cost: shutdown_cost
+
+link:
+  connection:
+    availability: availability
+    efficiency: efficiency
+    interest_rate: interest_rate
+    investment_cost: invest_cost
+    fixed_cost: fixed_cost
+    lifetime: lifetime
+    salvage_value: salvage_value
+    operational_cost: other_operational_cost
+
+unit__to_node: 
+  unit__outputNode:
+    conversion_coefficient: coefficient
+    other_operational_cost: other_operational_cost
+    ramp_cost: ramp_cost
+    ramp_limit_up: ramp_limit_up
+    ramp_limit_down: ramp_limit_down
+    constraint_flow_coefficient: constraint_flow_coefficient
+  profile:
+    profile_limit_upper: [profile, 1, [1]]
+    profile_limit_lower: [profile, 1, [1]]
+    profile_fixed: [profile, 1, [1]]
+
+node__to_unit: 
+  unit__inputNode:
+    conversion_coefficient: [coefficient, 1, [2, 1]]
+    other_operational_cost: [other_operational_cost, 1, [2, 1]]
+    ramp_cost: [ramp_cost, 1, [2, 1]]
+    ramp_limit_up: [ramp_limit_up, 1, [2, 1]]
+    ramp_limit_down: [ramp_limit_down, 1, [2, 1]]
+    constraint_flow_coefficient: [constraint_flow_coefficient, 1, [2, 1]]
+  profile:
+    profile_limit_upper: [profile, 1, [2]]
+    profile_limit_lower: [profile, 1, [2]]
+    profile_fixed: [profile, 1, [2]]

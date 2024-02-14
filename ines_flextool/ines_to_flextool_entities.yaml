@@ -1,0 +1,29 @@
+# source_entity_class: target_entity_class OR
+# source_entity_class: 
+#  list of target_entity_classes: 
+#    optional [list  of dimenstion positions] OR
+#    optional [list of dimension positions, [optional] {source_feature: source_method} or source_feature]
+node: 
+  - node
+  - commodity: [[1], {node_type: commodity}]
+  - commodity__node: [[1, 1], {node_type: commodity}]
+link: connection
+unit: unit
+solve_pattern: 
+  - solve
+  - model
+  - timeblockSet
+system: timeline
+constraint: constraint
+unit__to_node:
+  - unit__outputNode: [1, 2]
+  - profile: [[1], profile_method]
+  - unit__node__profile: [[1, 2, 1], profile_method]
+node__to_unit:
+  - unit__inputNode: [2, 1]
+  - profile: [[1], profile_method]
+  - unit__node__profile: [[2, 1, 2], profile_method]
+node__link__node:
+  connection__node__node: [2, 1, 3]
+  
+

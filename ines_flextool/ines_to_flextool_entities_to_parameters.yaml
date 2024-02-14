@@ -1,0 +1,6 @@
+# source entity_class:
+#   target_entity_class:
+#     target_parameter: optional target_parameter_type
+solve_pattern: 
+  model: 
+    solves: "array"
