@@ -1,8 +1,7 @@
 import spinedb_api as api
 from spinedb_api import DatabaseMapping
+from ines_tools import ines_transform
 import sys
-sys.path.append("../src/")
-import ines_transform
 import yaml
 
 url_db_in = sys.argv[1]
@@ -32,7 +31,7 @@ def main():
                 target_db.add_alternative_item(name=alternative.get('name'))
             target_db.commit_session("Added alternatives")
 
-            c## Copy entites
+            ## Copy entites
             target_db = ines_transform.copy_entities(source_db, target_db, entities_to_copy)
             ## Copy numeric parameters(source_db, target_db, copy_entities)
             target_db = ines_transform.transform_parameters(source_db, target_db, parameter_transforms, ts_to_map=True)
