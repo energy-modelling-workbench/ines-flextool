@@ -3,6 +3,9 @@
 #     source_parameter:
 #       target_parameter OR 
 #       [target_parameter, optional multiplier, [optional list of dimension positions]]
+system:
+  model:
+    discount_rate: discount_rate
 node: 
   node:
     flow_annual: annual_flow
@@ -46,19 +49,19 @@ unit__to_node:
     ramp_limit_down: ramp_limit_down
     constraint_flow_coefficient: constraint_flow_coefficient
   profile:
-    profile_limit_upper: [profile, 1, [1]]
-    profile_limit_lower: [profile, 1, [1]]
-    profile_fixed: [profile, 1, [1]]
+    profile_limit_upper: [profile, 1, [[1]]]
+    profile_limit_lower: [profile, 1, [[1]]]
+    profile_fixed: [profile, 1, [[1]]]
 
 node__to_unit: 
   unit__inputNode:
-    conversion_coefficient: [coefficient, 1, [2, 1]]
-    other_operational_cost: [other_operational_cost, 1, [2, 1]]
-    ramp_cost: [ramp_cost, 1, [2, 1]]
-    ramp_limit_up: [ramp_limit_up, 1, [2, 1]]
-    ramp_limit_down: [ramp_limit_down, 1, [2, 1]]
-    constraint_flow_coefficient: [constraint_flow_coefficient, 1, [2, 1]]
+    conversion_coefficient: [coefficient, 1, [[2], [1]]]
+    other_operational_cost: [other_operational_cost, 1, [[2], [1]]]
+    ramp_cost: [ramp_cost, 1, [[2], [1]]]
+    ramp_limit_up: [ramp_limit_up, 1, [[2], [1]]]
+    ramp_limit_down: [ramp_limit_down, 1, [[2], [1]]]
+    constraint_flow_coefficient: [constraint_flow_coefficient, 1, [[2], [1]]]
   profile:
-    profile_limit_upper: [profile, 1, [2]]
-    profile_limit_lower: [profile, 1, [2]]
-    profile_fixed: [profile, 1, [2]]
+    profile_limit_upper: [profile, 1, [[2]]]
+    profile_limit_lower: [profile, 1, [[2]]]
+    profile_fixed: [profile, 1, [[2]]]

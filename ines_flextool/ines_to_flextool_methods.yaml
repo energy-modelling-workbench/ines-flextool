@@ -11,6 +11,8 @@ node:
       storage:
         has_balance: 'yes'
         has_storage: 'yes'
+      balance_within_period:
+        node_type: 'balance_within_period'
     flow_scaling_method:
       no_inflow:
         inflow_method: 'no_inflow'

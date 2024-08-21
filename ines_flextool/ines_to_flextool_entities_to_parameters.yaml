@@ -1,6 +1,7 @@
 # source entity_class:
 #   target_entity_class:
-#     target_parameter: optional target_parameter_type
+#     target_parameter: ["entity_name", target_parameter_type]
+#                       ["new_value", target_parameter_value]
 solve_pattern: 
   model: 
-    solves: "array"
+    solves: ["entity_name", "array", [[1]]]
