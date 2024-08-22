@@ -69,7 +69,7 @@ def process_capacities(source_db, target_db):
     for n_to_u in node__to_unit_entities:
         unit__node_to_unit[n_to_u["entity_byname"][1]].append([n_to_u["entity_byname"]])
     for unit_source in source_db.get_entity_items(entity_class_name="unit"):
-        existing_units = {}
+        units_existing = {}
         u_to_n_capacity = {}
         u_to_n_investment_cost = {}
         u_to_n_fixed_cost = {}
@@ -79,12 +79,14 @@ def process_capacities(source_db, target_db):
         n_to_u_fixed_cost = {}
         n_to_u_salvage_value = {}
 
-        # Store parameter existing_units (for the alternatives that define it)
-        params = source_db.get_parameter_value_items(entity_class_name="unit", entity_name=unit_source["name"], parameter_definition_name="existing_units")
+        # Store parameter units_existing (for the alternatives that define it)
+        units_max_cumulatives = source_db.get_parameter_value_items(entity_class_name="unit", entity_name=unit_source["name"], parameter_definition_name="units_max_cumulative")
+        units_min_cumulatives = source_db.get_parameter_value_items(entity_class_name="unit", entity_name=unit_source["name"], parameter_definition_name="units_min_cumulative")
+        params = source_db.get_parameter_value_items(entity_class_name="unit", entity_name=unit_source["name"], parameter_definition_name="units_existing")
         for param in params:
             value = api.from_database(param["value"], param["type"])
             if value:
-                existing_units[param["alternative_name"]] = value
+                units_existing[param["alternative_name"]] = value
                 alt_ent_class = (param["alternative_name"], unit_source["entity_byname"], "unit")
                 # Write 'number of existing units' to the db (assuming ines_db uses number of units as it should)
                 target_db = ines_transform.add_item_to_DB(target_db, "existing", alt_ent_class, value)
@@ -125,7 +127,20 @@ def process_capacities(source_db, target_db):
                 if not isinstance(u_to_n_val, float):
                     exit("Unit_to_node capacity in ines_db needs to be a constant float")
                 target_db = ines_transform.add_item_to_DB(target_db, "virtual_unitsize", alt_ent_class, u_to_n_val)
-        # Write 'existing' capacity and virtual_unitsize to FlexTool DB (if capacity is defined in unit inputs instead)
+                for units_max_cumulative in units_max_cumulatives:
+                    cul_capacity_list = []
+                    for value in units_max_cumulative["parsed_value"].values:
+                        cul_capacity_list.append(round(value * u_to_n_val, 6))
+                    cul_capacity_map = api.Map(indexes=units_max_cumulative["parsed_value"].indexes, values=cul_capacity_list, index_name="period")
+                    target_db = ines_transform.add_item_to_DB(target_db, "invest_max_total", alt_ent_class, cul_capacity_map)
+                for units_min_cumulative in units_min_cumulatives:
+                    cul_capacity_list = []
+                    for value in units_min_cumulative["parsed_value"].values:
+                        cul_capacity_list.append(round(value * u_to_n_val, 6))
+                    cul_capacity_map = api.Map(indexes=units_min_cumulative["parsed_value"].indexes, values=cul_capacity_list, index_name="period")
+                    target_db = ines_transform.add_item_to_DB(target_db, "invest_min_total", alt_ent_class, cul_capacity_map)
+
+        # Write virtual_unitsize to FlexTool DB (if capacity is defined in unit inputs instead)
         elif n_to_u_capacity:
             for n_to_u_alt, n_to_u_val in n_to_u_capacity.items():
                 alt_ent_class = (n_to_u_alt, unit_source["entity_byname"], "unit")
