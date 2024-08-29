@@ -132,13 +132,13 @@ def process_capacities(source_db, target_db):
                     for value in units_max_cumulative["parsed_value"].values:
                         cul_capacity_list.append(round(value * u_to_n_val, 6))
                     cul_capacity_map = api.Map(indexes=units_max_cumulative["parsed_value"].indexes, values=cul_capacity_list, index_name="period")
-                    target_db = ines_transform.add_item_to_DB(target_db, "invest_max_total", alt_ent_class, cul_capacity_map)
+                    target_db = ines_transform.add_item_to_DB(target_db, "cumulative_max_capacity", alt_ent_class, cul_capacity_map)
                 for units_min_cumulative in units_min_cumulatives:
                     cul_capacity_list = []
                     for value in units_min_cumulative["parsed_value"].values:
                         cul_capacity_list.append(round(value * u_to_n_val, 6))
                     cul_capacity_map = api.Map(indexes=units_min_cumulative["parsed_value"].indexes, values=cul_capacity_list, index_name="period")
-                    target_db = ines_transform.add_item_to_DB(target_db, "invest_min_total", alt_ent_class, cul_capacity_map)
+                    target_db = ines_transform.add_item_to_DB(target_db, "cumulative_min_capacity", alt_ent_class, cul_capacity_map)
 
         # Write virtual_unitsize to FlexTool DB (if capacity is defined in unit inputs instead)
         elif n_to_u_capacity:
@@ -147,6 +147,18 @@ def process_capacities(source_db, target_db):
                 if not isinstance(n_to_u_val, float):
                     exit("Node_to_unit capacity in ines_db needs to be a constant float")
                 target_db = ines_transform.add_item_to_DB(target_db, "virtual_unitsize", alt_ent_class, n_to_u_val)
+                for units_max_cumulative in units_max_cumulatives:
+                    cul_capacity_list = []
+                    for value in units_max_cumulative["parsed_value"].values:
+                        cul_capacity_list.append(round(value * n_to_u_val, 6))
+                    cul_capacity_map = api.Map(indexes=units_max_cumulative["parsed_value"].indexes, values=cul_capacity_list, index_name="period")
+                    target_db = ines_transform.add_item_to_DB(target_db, "cumulative_max_capacity", alt_ent_class, cul_capacity_map)
+                for units_min_cumulative in units_min_cumulatives:
+                    cul_capacity_list = []
+                    for value in units_min_cumulative["parsed_value"].values:
+                        cul_capacity_list.append(round(value * n_to_u_val, 6))
+                    cul_capacity_map = api.Map(indexes=units_min_cumulative["parsed_value"].indexes, values=cul_capacity_list, index_name="period")
+                    target_db = ines_transform.add_item_to_DB(target_db, "cumulative_min_capacity", alt_ent_class, cul_capacity_map)
 
         # Write 'investment_cost', 'fixed_cost' and 'salvage_value' to FlexTool DB (if investment_cost defined in unit outputs)
         if u_to_n_investment_cost:

@@ -39,8 +39,8 @@ unit:
     investment_method: 
       not_allowed: 
         invest_method: 'not_allowed'
-      limit_total_capacity: 
-        invest_method: 'invest_total'
+      cumulative_limits: 
+        invest_method: 'cumulative_limits'
       no_limits: 
         invest_method: 'invest_no_limit'
 link: 
