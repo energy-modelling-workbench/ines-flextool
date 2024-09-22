@@ -7,8 +7,14 @@ import yaml
 from collections import defaultdict
 from dateutil.relativedelta import relativedelta
 
-url_db_in = sys.argv[1]
-url_db_out = sys.argv[2]
+if len(sys.argv) > 1:
+    url_db_in = sys.argv[1]
+else:
+    exit("Please provide input database url and output database url as arguments. They should be of the form ""sqlite:///path/db_file.sqlite""")
+if len(sys.argv) > 2:
+    url_db_out = sys.argv[2]
+else:
+    exit("Please provide input database url and output database url as arguments. They should be of the form ""sqlite:///path/db_file.sqlite""")
 
 with open('ines_to_flextool_entities.yaml', 'r') as file:
     entities_to_copy = yaml.load(file, yaml.BaseLoader)
