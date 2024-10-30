@@ -1,6 +1,7 @@
 import spinedb_api as api
 from spinedb_api import DatabaseMapping
 from ines_tools import ines_transform
+from spinedb_api.exception import NothingToCommit
 from sqlalchemy.exc import DBAPIError
 import sys
 import yaml
@@ -308,6 +309,8 @@ def process_user_constraints(source_db, target_db):
                         print("Failed to find unit__to_node or node__to_unit for " + constraint_name)
     try:
         target_db.commit_session("Added user constraints")
+    except NothingToCommit:
+        print("No user constraints to commit")
     except DBAPIError as e:
         print("Processing user constraints error")
     return target_db
@@ -374,8 +377,8 @@ def create_timeline(source_db, target_db):
             if start_time_param and duration_param:
                 duration_value = api.from_database(duration_param[0]["value"], duration_param[0]["type"])
                 start_time = api.from_database(start_time_param[0]["value"], start_time_param[0]["type"])
-                if isinstance(duration_value, float):
-                    block_duration = api.Map([str(start_time)], [duration_value.value.days * 24 + duration_value.value.hours + duration_value.value.minutes / 60], index_name="timestep")
+                if isinstance(duration_value, api.Duration):
+                    timeblocks_map = api.Map([str(start_time)], [duration_value.value.days * 24 + duration_value.value.hours + duration_value.value.minutes / 60], index_name="timestep")
                 else:
                     if len(duration_value) != len(start_time):
                         exit("duration and start_time parameters have different number of array elements under the same alternative (in same solve-pattern entity) - they need to match")
@@ -402,15 +405,15 @@ def create_timeline(source_db, target_db):
                             #for block in duration_value.values:
                                 #durations.append(block.value.days * 24 + block.value.hours + block.value.minutes / 60 + block.value.seconds / 3600)
                     timeblocks_map = api.Map(indexes=start_time.values, values=durations, index_name="timestamp")
-                    p_value, p_type = api.to_database(timeblocks_map)
-                    added, error = target_db.add_parameter_value_item(entity_class_name="timeblockSet",
-                                                                      entity_byname=(solve_entity["name"],),
-                                                                      parameter_definition_name="block_duration",
-                                                                      alternative_name=alt,
-                                                                      value=p_value,
-                                                                      type=p_type)
-                    if error:
-                        print("writing block_duration failed: " + error)
+                p_value, p_type = api.to_database(timeblocks_map)
+                added, error = target_db.add_parameter_value_item(entity_class_name="timeblockSet",
+                                                                  entity_byname=(solve_entity["name"],),
+                                                                  parameter_definition_name="block_duration",
+                                                                  alternative_name=alt,
+                                                                  value=p_value,
+                                                                  type=p_type)
+                if error:
+                    print("writing block_duration failed: " + error)
         for system_entity in source_db.get_entity_items(entity_class_name="system"):
             added, error = target_db.add_item("entity",
                                                 entity_class_name="timeblockSet__timeline",
