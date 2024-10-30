@@ -12,6 +12,8 @@ node:
     flow_profile: inflow
     penalty_upward: penalty_up
     penalty_downward: penalty_down
+    storage_existing: existing
+    storage_capacity: virtual_unitsize
     storage_interest_rate: interest_rate
     storage_fixed_cost: fixed_cost
     storage_lifetime: lifetime
