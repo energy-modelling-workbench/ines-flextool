@@ -47,6 +47,8 @@ def main():
                                                         rank=scenario_alternative["rank"])
             try:
                 target_db.commit_session("Added scenarios and alternatives")
+            except NothingToCommit:
+                print("No scenarios or alternatives to commit")
             except DBAPIError as e:
                 print(e)
 
